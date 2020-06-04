@@ -49,6 +49,7 @@ public class BeerLoader implements CommandLineRunner {
                 .build();
 
         this.beerRepository.save(b1);
+        log.info(">>>>>>> Saved {}", b1.getId());
 
         Beer b2 = Beer.builder()
                 .beerName("Galaxy Cat")
@@ -60,6 +61,7 @@ public class BeerLoader implements CommandLineRunner {
                 .build();
 
         this.beerRepository.save(b2);
+        log.info(">>>>>>> Saved {}", b2.getId());
 
         Beer b3 = Beer.builder()
                 .beerName("Pinball Porter")
@@ -71,6 +73,7 @@ public class BeerLoader implements CommandLineRunner {
                 .build();
 
         this.beerRepository.save(b3);
+        log.info(">>>>>>> Saved {}", b3.getId());
     }
 
 }///:~

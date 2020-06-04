@@ -31,10 +31,8 @@ public class BeerService implements IBeerService {
 
     @Override
     public BeerDto getById(@NonNull UUID id) {
-
         Beer beer = this.findBeerById(id);
         BeerDto beerDto = this.beerMapper.beerToBeerDto(beer);
-
         return beerDto;
     }
 
@@ -62,9 +60,10 @@ public class BeerService implements IBeerService {
     }
 
     private Beer findBeerById(@NonNull UUID id) {
+
         return this.beerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(
-                        String.format("There is not Beer with ID %s",
+                        String.format("There is no Beer with ID %s",
                                 id.toString())));
     }
 
