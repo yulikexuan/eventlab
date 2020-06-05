@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.support.RequestHandledEvent;
 
@@ -51,6 +52,7 @@ public class BeerController {
                 HttpStatus.NO_CONTENT);
     }
 
+    @Async
     @EventListener
     public void handleRequestHandledEvent(RequestHandledEvent rhe) {
         log.info(">>>>>>> [EVENT] - Request was handled - {}", rhe.getDescription());
