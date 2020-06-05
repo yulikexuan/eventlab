@@ -5,6 +5,8 @@ package guru.sfg.mssc.beer.service.web.controller;
 
 
 import guru.sfg.mssc.beer.service.domain.services.IBeerService;
+import guru.sfg.mssc.beer.service.web.events.EventPublisher;
+import guru.sfg.mssc.beer.service.web.events.GenericAppEvent;
 import guru.sfg.mssc.beer.service.web.model.BeerDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +27,20 @@ import java.util.UUID;
 public class BeerController {
 
     private final IBeerService beerService;
+    private final EventPublisher eventPublisher;
 
     @Autowired
-    public BeerController(IBeerService beerService) {
+    public BeerController(IBeerService beerService,
+                          EventPublisher eventPublisher) {
+
         this.beerService = beerService;
+        this.eventPublisher = eventPublisher;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<BeerDto> getBeerById(@PathVariable("id") UUID id) {
         BeerDto beerDto = this.beerService.getById(id);
+        this.eventPublisher.publishFoundBeerEvent(id);
         return new ResponseEntity<>(beerDto, HttpStatus.OK);
     }
 

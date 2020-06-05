@@ -8,20 +8,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 
 @Component
-public class NotFoundEventPublisher {
+public class EventPublisher {
 
     private final ApplicationEventPublisher appEventPublisher;
 
     @Autowired
-    public NotFoundEventPublisher(ApplicationEventPublisher appEventPublisher) {
+    public EventPublisher(ApplicationEventPublisher appEventPublisher) {
         this.appEventPublisher = appEventPublisher;
     }
 
-    public void publish(final String message) {
+    public void publishNotFoundEvent(final String message) {
         NotFoundEvent event = NotFoundEvent.of(this, message);
         this.appEventPublisher.publishEvent(event);
+    }
+
+    public void publishFoundBeerEvent(final UUID beerId) {
+        FoundBeerEvent foundBeerEvent = FoundBeerEvent.of(this, beerId);
+        this.appEventPublisher.publishEvent(foundBeerEvent);
     }
 
 }///:~

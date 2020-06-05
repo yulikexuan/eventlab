@@ -3,7 +3,7 @@
 
 package guru.sfg.mssc.beer.service.web.controller;
 
-import guru.sfg.mssc.beer.service.web.events.NotFoundEventPublisher;
+import guru.sfg.mssc.beer.service.web.events.EventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 @ControllerAdvice
 public class MvcControllerExceptionHandler {
 
-    private final NotFoundEventPublisher notFoundEventPublisher;
+    private final EventPublisher notFoundEventPublisher;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<String>> methodArgumaneValidationErrorHandler(
@@ -65,7 +65,7 @@ public class MvcControllerExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<String> handleNotFoundException(NotFoundException nfe) {
-        notFoundEventPublisher.publish(nfe.getMessage());
+        notFoundEventPublisher.publishNotFoundEvent(nfe.getMessage());
         return new ResponseEntity(nfe.getMessage(), HttpStatus.NOT_FOUND);
     }
 
