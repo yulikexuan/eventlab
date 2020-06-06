@@ -7,11 +7,14 @@ package guru.sfg.mssc.beer.service.domain.services;
 import guru.sfg.mssc.beer.service.domain.model.Beer;
 import guru.sfg.mssc.beer.service.domain.repositories.IBeerRepository;
 import guru.sfg.mssc.beer.service.web.controller.NotFoundException;
+import guru.sfg.mssc.beer.service.web.events.EventPublisher;
+import guru.sfg.mssc.beer.service.web.events.NewBeerSavedEvent;
 import guru.sfg.mssc.beer.service.web.mapper.IBeerMapper;
 import guru.sfg.mssc.beer.service.web.model.BeerDto;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -22,11 +25,14 @@ public class BeerService implements IBeerService {
 
     private final IBeerRepository beerRepository;
     private final IBeerMapper beerMapper;
+    private final EventPublisher eventPublisher;
 
     @Autowired
-    public BeerService(IBeerRepository beerRepository, IBeerMapper beerMapper) {
+    public BeerService(IBeerRepository beerRepository, IBeerMapper beerMapper,
+                       EventPublisher eventPublisher) {
         this.beerRepository = beerRepository;
         this.beerMapper = beerMapper;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -46,6 +52,7 @@ public class BeerService implements IBeerService {
         return savedBeerDto;
     }
 
+    @Transactional
     @Override
     public BeerDto updateBeer(@NonNull UUID id, @NonNull BeerDto beerDto) {
 
@@ -56,7 +63,11 @@ public class BeerService implements IBeerService {
         beer.setPrice(beerDto.getPrice());
         beer.setUpc(beerDto.getUpc());
 
-        return this.beerMapper.beerToBeerDto(beer);
+        beerDto = this.beerMapper.beerToBeerDto(beer);
+
+        this.eventPublisher.publishNewBeerSavedEvent(beerDto);
+
+        return beerDto;
     }
 
     private Beer findBeerById(@NonNull UUID id) {

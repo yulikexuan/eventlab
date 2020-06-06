@@ -7,6 +7,7 @@ package guru.sfg.mssc.beer.service.web.controller;
 import guru.sfg.mssc.beer.service.domain.services.IBeerService;
 import guru.sfg.mssc.beer.service.web.events.EventPublisher;
 import guru.sfg.mssc.beer.service.web.events.GenericAppEvent;
+import guru.sfg.mssc.beer.service.web.events.NewBeerSavedEvent;
 import guru.sfg.mssc.beer.service.web.model.BeerDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.support.RequestHandledEvent;
 
@@ -63,6 +66,12 @@ public class BeerController {
     @EventListener
     public void handleRequestHandledEvent(RequestHandledEvent rhe) {
         log.info(">>>>>>> [EVENT] - Request was handled - {}", rhe.getDescription());
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleCustom(NewBeerSavedEvent event) {
+        log.info(">>>>>>> [EVENT] - Beer Updated. {}", event.getPayload());
     }
 
 }///:~
